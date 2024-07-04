@@ -1,13 +1,9 @@
-use core::panic;
-
-pub(crate) fn extract_expression(s: &str) -> (&str, &str) {
-    // This finds the index of the operation sign and returns it (index)
-    // If not found it returns the whole length of the string so that we can just return it...
-
-    let mut op_index = s
+pub(crate) fn extract_digits(s: &str) -> (&str, &str) {
+    // 1. Find the index of the operation sign and return ir, otherwise, just return the length of the whole thing
+    let operation_index = s
         .char_indices()
-        .find_map(|(idx, curr_char)| {
-            if curr_char.is_ascii_digit() {
+        .find_map(|(idx, current_char)| {
+            if current_char.is_ascii_digit() {
                 None
             } else {
                 Some(idx)
@@ -15,18 +11,22 @@ pub(crate) fn extract_expression(s: &str) -> (&str, &str) {
         })
         .unwrap_or_else(|| s.len());
 
-    // 5 + 6
-    // 0,1,2
-    let digits = &s[op_index..];
-    let remainder = &s[..op_index];
+    // 5+6
+    // (+6, 5)
+    let digits = &s[..operation_index];
+    let remainder = &s[operation_index..];
 
-    (digits, remainder)
+    (remainder, digits)
 }
 
 pub(crate) fn extract_op(s: &str) -> (&str, &str) {
+    // +6
+    // (6, +)
+    // + 6
+    // 0,1
     match &s[0..1] {
         "+" | "-" | "*" | "/" => {}
-        _ => panic!("bad operator"),
+        _ => panic!("Bad operation"),
     }
 
     (&s[1..], &s[0..1])
@@ -37,12 +37,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_extract_op() {
-        assert_eq!(extract_op("+9"), ("9", "+"));
-    }
-
-    #[test]
-    fn test_extract_expression_add() {
-        assert_eq!(extract_expression("5+6"), ("+6", "5"));
+    fn test_extract_digits_add() {
+        assert_eq!(extract_digits("5+6"), ("+6", "5"));
     }
 }

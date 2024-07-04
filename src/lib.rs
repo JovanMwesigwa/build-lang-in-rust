@@ -1,33 +1,33 @@
 // What to do
-// 1. Parse any strings entered to numbers
-// 2. Parse any operation
+// 1. Parse any strings entered to numbers // (+6, 5)
+// 2. Parse any operation // (5, +)
 // 3. Make Executions
 
 mod utils;
 
-// 1 Numbers
+// 1. Numbers
 #[derive(Debug, PartialEq)]
 pub struct Number(pub i32);
 
 impl Number {
     pub fn new(s: &str) -> (&str, Self) {
-        let (s, number) = utils::extract_expression(s); // (+6, 5)
+        let (s, number) = utils::extract_digits(s);
+
         (s, Self(number.parse().unwrap()))
     }
 }
 
-// 2. Operation
 #[derive(Debug, PartialEq)]
 pub enum Op {
     Add,
     Sub,
-    Mul,
     Div,
+    Mul,
 }
 
 impl Op {
     pub fn new(s: &str) -> (&str, Self) {
-        let (s, op) = utils::extract_op(s); // (5, +)
+        let (s, op) = utils::extract_op(s);
 
         let op = match op {
             "+" => Op::Add,
@@ -41,7 +41,7 @@ impl Op {
     }
 }
 
-// 3. Expression parse
+// 3. Expression
 #[derive(Debug, PartialEq)]
 pub struct Expr {
     lhs: Number,
@@ -64,7 +64,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_parse_expr() {
+    fn test_expr() {
         assert_eq!(
             Expr::new("1+2"),
             (
@@ -79,12 +79,12 @@ mod tests {
     }
 
     #[test]
-    fn test_parse_op() {
-        assert_eq!(Op::new("+"), ("", Op::Add));
+    fn test_extract_number() {
+        assert_eq!(Number::new("6"), ("", Number(6)));
     }
 
     #[test]
-    fn test_parse_number() {
-        assert_eq!(Number::new("245"), ("", Number(245)));
+    fn test_extract_op() {
+        assert_eq!(Op::new("+6"), ("6", Op::Add));
     }
 }
